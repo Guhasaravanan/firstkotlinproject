@@ -72,6 +72,22 @@ LazyColumn {
         Spacer(modifier = Modifier.height(4.dp))
     }
 }
+           Card(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(8.dp),
+               colors = CardDefaults.cardColors(
+                   containerColor = MaterialTheme.colorScheme.errorContainer
+               ),
+               elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+           ) {
+               Column(modifier = Modifier.padding(16.dp)) {
+                   Text("Todo Title", style = MaterialTheme.typography.titleMedium)
+                   Spacer(modifier = Modifier.height(8.dp))
+                   Text("This is a sample description for the todo item.", style = MaterialTheme.typography.bodyMedium)
+               }
+           }
+
        }
    }
 }
