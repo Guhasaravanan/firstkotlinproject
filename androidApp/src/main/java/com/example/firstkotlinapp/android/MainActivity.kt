@@ -21,6 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 import model.TodoItem
 
@@ -35,14 +39,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TodoApp()
+                    val navController = rememberNavController()
+
+                    AppNavigation(navController)
                 }
             }
         }
     }
 
    @Composable
-   fun TodoApp(){
+   fun TodoApp(navController: NavHostController) {
+
        var text by remember {
            mutableStateOf("")
        }
@@ -50,28 +57,36 @@ class MainActivity : ComponentActivity() {
            mutableStateOf(listOf<String>())
        }
 
-       Column(modifier = Modifier
-           .fillMaxSize()
-           .padding(16.dp), verticalArrangement = Arrangement.Top,         horizontalAlignment = Alignment.CenterHorizontally
+       Column(
+           modifier = Modifier
+               .fillMaxSize()
+               .padding(16.dp),
+           verticalArrangement = Arrangement.Top,
+           horizontalAlignment = Alignment.CenterHorizontally
        ) {
-TextField(value = text, onValueChange ={text = it}, label = {Text("Enter Todo")}, modifier = Modifier.fillMaxWidth() )
-      Spacer(modifier = Modifier.height(8.dp))
+           TextField(
+               value = text,
+               onValueChange = { text = it },
+               label = { Text("Enter Todo") },
+               modifier = Modifier.fillMaxWidth()
+           )
+           Spacer(modifier = Modifier.height(8.dp))
            Button(onClick = {
-               if(text.isNotBlank()){
+               if (text.isNotBlank()) {
                    todos = todos + text
                    text = ""
                }
            }) {
-Text(text = "Add Todo")
+               Text(text = "Add Todo")
 
            }
            Spacer(modifier = Modifier.height(16.dp))
-LazyColumn {
-    items(todos) { todo ->
-        Text("- $todo", style = MaterialTheme.typography.bodyLarge)
-        Spacer(modifier = Modifier.height(4.dp))
-    }
-}
+           LazyColumn {
+               items(todos) { todo ->
+                   Text("- $todo", style = MaterialTheme.typography.bodyLarge)
+                   Spacer(modifier = Modifier.height(4.dp))
+               }
+           }
            Card(
                modifier = Modifier
                    .fillMaxWidth()
@@ -84,10 +99,40 @@ LazyColumn {
                Column(modifier = Modifier.padding(16.dp)) {
                    Text("Todo Title", style = MaterialTheme.typography.titleMedium)
                    Spacer(modifier = Modifier.height(8.dp))
-                   Text("This is a sample description for the todo item.", style = MaterialTheme.typography.bodyMedium)
+                   Text(
+                       "This is a sample description for the todo item.",
+                       style = MaterialTheme.typography.bodyMedium
+                   )
                }
            }
 
+
+
+           Spacer(modifier = Modifier.height(16.dp))
+           Button(onClick = {
+               navController.navigate("second")
+           }) {
+               Text(text = "Go to Second Screen")
+           }
        }
    }
+    @Composable
+    fun SecondScreen(navController: NavHostController){
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+Text(text = "Hi this is the second screen...", style = MaterialTheme.typography.headlineMedium)
+        }
+    }
+
+    @Composable
+    fun AppNavigation(navController: NavHostController) {
+        NavHost(navController = navController, startDestination = "todo") {
+            composable("todo") {
+                TodoApp(navController)
+            }
+            composable("second") {
+                SecondScreen(navController)
+            }
+        }
+    }
+
 }
